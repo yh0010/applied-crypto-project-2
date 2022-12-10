@@ -1,11 +1,11 @@
 import pandas as pd
 import numpy as np
 
-df = pd.read_csv("VOTER_Survey_December16_Release1.csv")
+df = pd.read_csv("voter_data.csv")
 print(df.head()) #to learn what columns we want
 
 #select only desired columns into new pandas frame
-df_new = df[["case_identifier","PARTY_AGENDAS_rand_2016","inputstate_2016","presvote16post_2016"]]
+df_new = df[["case_identifier","PARTY_AGENDAS_rand_2016","presvote16post_2016"]]
 print(df_new.head())
 
 import category_encoders as ce
@@ -23,3 +23,7 @@ print(df_HT["presvote16post_2016"].value_counts())
 #encode two candidates into 1 and 0
 y = df_HT['presvote16post_2016'].map({'Hillary Clinton':1,'Donald Trump':0})
 print(y.value_counts())
+#--------------------------------
+
+
+
