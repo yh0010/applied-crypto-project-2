@@ -1,4 +1,5 @@
 from utils import *
+from time import time
 
 print("----------Data Cleaning and Encoding------------")
 
@@ -46,12 +47,25 @@ print(' ')
 print("----------Perform Queries------------")
 print(' ')
 print("1. Carol, give me the total votes of Hillary and Trump individually")
+start = time()
 queryDB(HE,1)
+query1_time = time() - start
 
 print(' ')
 print("2. Carol, how many republican voted for Hillary?")
+start = time()
 queryDB(HE,2)
+query2_time = time() - start
 
 print(' ')
 print("3. Carol, whats the percentage of republican voted for Hillary?")
+start = time()
 queryDB(HE,3)
+query3_time = time() - start
+
+print(' ')
+print("----------Execution Time for Each Query------------")
+print(' ')
+print(f"Query 1: {query1_time:.3f} seconds")
+print(f"Query 2: {query2_time:.3f} seconds")
+print(f"Query 3: {query3_time:.3f} seconds")
