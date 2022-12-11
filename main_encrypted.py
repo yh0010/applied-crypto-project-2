@@ -45,13 +45,13 @@ checkDB(HE) # Pull out all inserted records to confirm information integrity is 
 print(' ')
 print("----------Perform Queries------------")
 print(' ')
-print("1. Carol, give me the total votes of Hillary and Trump individually")
+print("1. [Addition] Carol, give me the total votes of Hillary and Trump individually")
 queryDB(HE,1)
 
 print(' ')
-print("2. Carol, how many republican voted for Hillary?")
+print("2. [Conditional Addition] Carol, how many republican voted for Hillary?")
 queryDB(HE,2)
 
 print(' ')
-print("3. Carol, whats the percentage of republican voted for Hillary?")
+print("3. [Conditional Division] Carol, whats the percentage of republican voted for Hillary?")
 queryDB(HE,3)
