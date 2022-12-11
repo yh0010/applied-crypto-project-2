@@ -45,7 +45,7 @@ def encode_vote():
     print(df_new.head())
 
     print(' ')
-    print("3. restrict candidates to be only Hilary or Trump and remove NaN value")
+    print("3. restrict candidates to be only Hillary or Trump and remove NaN value")
     print(df_new['presvote16post_2016'].value_counts())
 
     df_new.replace(" ", float("NaN"), inplace=True)
@@ -202,9 +202,9 @@ def queryDB(HE, val):
                 df = pd.DataFrame(ls, columns=col_names)
 
                 if val == 1:
-                    hilary_total = df['candidate'].sum()
+                    hillary_total = df['candidate'].sum()
                     trump_total = df['candidate'].count() - df['candidate'].sum()
-                    print("Hilary: ", hilary_total.item(0))
+                    print("Hillary: ", hillary_total.item(0))
                     print("Trump: ", trump_total.item(0))
 
                 elif val == 2:
@@ -212,7 +212,7 @@ def queryDB(HE, val):
                     for i, r in df.iterrows():
                         if r['party'].item(0) == 0 and r['candidate'].item(0) == 1:
                             count += 1
-                            print(count, r)
+                            # print(count, r)
                     print("The total count is: ",count)
 
                 elif val == 3:
@@ -221,9 +221,9 @@ def queryDB(HE, val):
                         if r['party'].item(0) == 0 and r['candidate'].item(0) == 1:
                             count += 1
                     print(round(float(count/(df['candidate'].count() - df['candidate'].sum()).item(0)) * 100, 2), "%")
-                    query = """drop table votedata"""
-                    cursor.execute(query)
-                    connection.commit()
+                    # query = """drop table votedata"""
+                    # cursor.execute(query)
+                    # connection.commit()
 
 
     except (Exception, psycopg2.Error) as error:
@@ -337,9 +337,9 @@ def queryDB_Unencrypted(val):
                 df = pd.DataFrame(ls, columns=col_names)
 
                 if val == 1:
-                    hilary_total = df['candidate'].sum()
+                    hillary_total = df['candidate'].sum()
                     trump_total = df['candidate'].count() - df['candidate'].sum()
-                    print("Hilary: ", hilary_total.item(0))
+                    print("Hillary: ", hillary_total.item(0))
                     print("Trump: ", trump_total.item(0))
 
                 elif val == 2:
@@ -348,7 +348,7 @@ def queryDB_Unencrypted(val):
                         if r['party'].item(0) == 0 and r['candidate'].item(0) == 1:
                             count += 1
                             # print(count, r)
-                    print(count)
+                    print("The total count is: ",count)
 
                 elif val == 3:
                     count = 0
@@ -356,9 +356,9 @@ def queryDB_Unencrypted(val):
                         if r['party'].item(0) == 0 and r['candidate'].item(0) == 1:
                             count += 1
                     print(round(float(count/(df['candidate'].count() - df['candidate'].sum()).item(0)) * 100, 2), "%")
-                    query = """drop table votedata_unencrypted"""
-                    cursor.execute(query)
-                    connection.commit()
+                    # query = """drop table votedata_unencrypted"""
+                    # cursor.execute(query)
+                    # connection.commit()
     except (Exception, psycopg2.Error) as error:
                 print("Failed.", error)
 
