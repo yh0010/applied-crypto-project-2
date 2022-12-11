@@ -27,6 +27,7 @@ print(df_head)
 print(' ')
 print("----------Pass Into Database------------") 
 # Next Alice stores the ciphertext into Carol
+deleteTable() # resetting table for testing purposes
 createTable() # create table if such table no exist
 
 insertDB(df_head) # insert Pyfhel.PyCtxt.PyCtxt object into Postgres database
@@ -38,13 +39,13 @@ checkDB(HE) # Pull out all inserted records to confirm information integrity is 
 print(' ')
 print("----------Perform Queries------------") 
 print(' ')
-print("1. Carol, give me the total votes of Hilary and Trump individually") 
+print("1. Carol, give me the total votes of Hillary and Trump individually") 
 queryDB(HE,1)
 
 print(' ')
-print("2. Carol, how many republican voted for Hilary?") 
+print("2. Carol, how many republican voted for Hillary?") 
 queryDB(HE,2)
 
 print(' ')
-print("3. Carol, whats the percentage of republican voted for Hilary?") 
+print("3. Carol, whats the percentage of republican voted for Hillary?") 
 queryDB(HE,3)

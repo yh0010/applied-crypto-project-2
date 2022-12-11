@@ -6,6 +6,8 @@ import numpy as np
 from Pyfhel import Pyfhel
 import psycopg2
 import copy
+from psycopg2.extensions import register_adapter, AsIs
+psycopg2.extensions.register_adapter(np.int64, psycopg2._psycopg.AsIs)
 
 
 def get_votes_count():
@@ -104,6 +106,20 @@ def createTable():
         cursor.execute("CREATE TABLE votedata (id serial PRIMARY KEY, caseid integer, party bytea, candidate bytea);")
         connection.commit()
 
+def deleteTable():
+    try:
+        connection = psycopg2.connect("host=localhost password=qqqq dbname=enc_vote user=postgres") #change your credential
+    except (Exception, psycopg2.Error) as error:
+        print("Connection not established", error)
+    
+    # Check if table exists
+    cursor = connection.cursor()
+    cursor.execute("SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name='votedata')")
+    if bool(cursor.fetchone()[0]):
+        print('Table exists. Deleting Table.')
+        cursor.execute("DROP TABLE votedata")
+        connection.commit()
+
 def insertDB(df_head):
     try:
         connection = psycopg2.connect("host=localhost password=qqqq dbname=enc_vote user=postgres")
@@ -126,7 +142,7 @@ def insertDB(df_head):
         if connection:
             cursor.close()
             connection.close()
-            print("PostgreSQL connection is closed")
+            # print("PostgreSQL connection is closed")
 
 def checkDB(HE):
     try:
@@ -156,7 +172,7 @@ def checkDB(HE):
                 if connection:
                     cursor.close()
                     connection.close()
-                    print("PostgreSQL connection is closed")
+                    # print("PostgreSQL connection is closed")
 
 def queryDB(HE, val):
     col_names = ['id', 'caseid', 'party', 'candidate']
@@ -189,7 +205,7 @@ def queryDB(HE, val):
                     for i, r in df.iterrows():
                         if r['party'].item(0) == 0 and r['candidate'].item(0) == 1:
                             count += 1
-                            print(count, r)
+                            # print(count, r)
                     print(count)
                 
                 elif val == 3:
@@ -211,4 +227,137 @@ def queryDB(HE, val):
                 if connection:
                     cursor.close()
                     connection.close()
-                    print("PostgreSQL connection is closed")
+                    # print("PostgreSQL connection is closed")
+
+
+##########################################################
+### SAME FUNCTIONS AS ABOVE, BUT FOR UNENCRYPTED TABLE ###
+##########################################################
+def createTable_Unencrypted():
+    try:
+        connection = psycopg2.connect("host=localhost password=qqqq dbname=enc_vote user=postgres") #change your credential
+    except (Exception, psycopg2.Error) as error:
+        print("Connection not established", error)
+
+    # Check if test_run Table Exists
+    cursor = connection.cursor()
+    cursor.execute("SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name='votedata_unencrypted')")
+    if bool(cursor.fetchone()[0]):
+        print('Unencrypted Table exists. Moving On.')
+    else:
+        print('Unencrypted Table does not exist. Creating the Table now.')
+        cursor.execute("CREATE TABLE votedata_unencrypted (id serial PRIMARY KEY, caseid integer, party int, candidate int);")
+        connection.commit()
+
+def deleteTable_Unencrypted():
+    try:
+        connection = psycopg2.connect("host=localhost password=qqqq dbname=enc_vote user=postgres") #change your credential
+    except (Exception, psycopg2.Error) as error:
+        print("Connection not established", error)
+    
+    # Check if table exists
+    cursor = connection.cursor()
+    cursor.execute("SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name='votedata_unencrypted')")
+    if bool(cursor.fetchone()[0]):
+        print('Unencrypted Table exists. Deleting Table.')
+        cursor.execute("DROP TABLE votedata_unencrypted")
+        connection.commit()
+
+def insertDB_Unencrypted(df_head):
+    try:
+        connection = psycopg2.connect("host=localhost password=qqqq dbname=enc_vote user=postgres")
+        cursor = connection.cursor()
+
+        for i, row in df_head.iterrows():
+            postgres_insert_query = """ INSERT INTO votedata_unencrypted (caseid, party, candidate) VALUES (%s,%s,%s)"""
+            record_to_insert = (row['case_identifier'], row['PARTY_AGENDAS_rand_2016'], row['presvote16post_2016'])
+            cursor.execute(postgres_insert_query, record_to_insert)
+            connection.commit()
+
+        count = cursor.rowcount
+        print(count, "Record inserted successfully into unencrypted table")
+
+    except (Exception, psycopg2.Error) as error:
+        print("Failed to insert record into unencrypted table", error)
+
+    finally:
+        # closing database connection.
+        if connection:
+            cursor.close()
+            connection.close()
+            # print("PostgreSQL connection is closed")
+
+def checkDB_Unencrypted():
+    try:
+                connection = psycopg2.connect("host=localhost password=qqqq dbname=enc_vote user=postgres")
+                cursor = connection.cursor()
+
+                postgres_extract_query = """ SELECT * FROM votedata_unencrypted """
+                cursor.execute(postgres_extract_query)
+
+                record = cursor.fetchall()
+                for item in record:
+                    print(item[0], item[1], item[2], item[3])
+
+                connection.commit()
+                count = cursor.rowcount
+                print(count, "pulled.")
+
+    except (Exception, psycopg2.Error) as error:
+                print("Failed.", error)
+
+    finally:
+                # closing database connection.
+                if connection:
+                    cursor.close()
+                    connection.close()
+                    # print("PostgreSQL connection is closed")
+
+def queryDB_Unencrypted(val):
+    col_names = ['id', 'caseid', 'party', 'candidate']
+    ls = []
+    try:
+                connection = psycopg2.connect("host=localhost password=qqqq dbname=enc_vote user=postgres")
+                cursor = connection.cursor()
+
+                postgres_extract_query = """ SELECT * FROM votedata_unencrypted"""
+                cursor.execute(postgres_extract_query)
+
+                record = cursor.fetchall()
+                for item in record:
+                    ls.append([item[0], item[1], item[2], item[3]])
+
+                df = pd.DataFrame(ls, columns=col_names)
+                
+                if val == 1:
+                    hilary_total = df['candidate'].sum()
+                    trump_total = df['candidate'].count() - df['candidate'].sum()
+                    print("Hilary: ", hilary_total.item(0))
+                    print("Trump: ", trump_total.item(0))
+
+                elif val == 2:
+                    count = 0
+                    for i, r in df.iterrows():
+                        if r['party'].item(0) == 0 and r['candidate'].item(0) == 1:
+                            count += 1
+                            # print(count, r)
+                    print(count)
+                
+                elif val == 3:
+                    count = 0
+                    for i, r in df.iterrows():
+                        if r['party'].item(0) == 0 and r['candidate'].item(0) == 1:
+                            count += 1
+                    print(round(float(count/(df['candidate'].count() - df['candidate'].sum()).item(0)) * 100, 2), "%")
+                    query = """drop table votedata_unencrypted"""
+                    cursor.execute(query)
+                    connection.commit()
+    except (Exception, psycopg2.Error) as error:
+                print("Failed.", error)
+
+    finally:
+                # closing database connection.
+                if connection:
+                    cursor.close()
+                    connection.close()
+                    # print("PostgreSQL connection is closed")
