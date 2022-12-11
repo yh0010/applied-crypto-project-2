@@ -212,8 +212,8 @@ def queryDB(HE, val):
                     for i, r in df.iterrows():
                         if r['party'].item(0) == 0 and r['candidate'].item(0) == 1:
                             count += 1
-                            # print(count, r)
-                    print(count)
+                            print(count, r)
+                    print("The total count is: ",count)
 
                 elif val == 3:
                     count = 0
