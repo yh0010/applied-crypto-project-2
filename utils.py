@@ -221,9 +221,9 @@ def queryDB(HE, val):
                         if r['party'].item(0) == 0 and r['candidate'].item(0) == 1:
                             count += 1
                     print(round(float(count/(df['candidate'].count() - df['candidate'].sum()).item(0)) * 100, 2), "%")
-                    query = """drop table votedata"""
-                    cursor.execute(query)
-                    connection.commit()
+                    # query = """drop table votedata"""
+                    # cursor.execute(query)
+                    # connection.commit()
 
 
     except (Exception, psycopg2.Error) as error:
@@ -356,9 +356,9 @@ def queryDB_Unencrypted(val):
                         if r['party'].item(0) == 0 and r['candidate'].item(0) == 1:
                             count += 1
                     print(round(float(count/(df['candidate'].count() - df['candidate'].sum()).item(0)) * 100, 2), "%")
-                    query = """drop table votedata_unencrypted"""
-                    cursor.execute(query)
-                    connection.commit()
+                    # query = """drop table votedata_unencrypted"""
+                    # cursor.execute(query)
+                    # connection.commit()
     except (Exception, psycopg2.Error) as error:
                 print("Failed.", error)
 
